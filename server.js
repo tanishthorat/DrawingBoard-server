@@ -149,6 +149,7 @@ io.on("connection", (socket) => {
   //     updatePresence(roomId);
   //   }
   // });
+  
 
   // socket.on("disconnect", () => {
   //   rooms.forEach((room, roomId) => {
