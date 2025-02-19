@@ -13,6 +13,7 @@ const io = new Server(server, {
     origin: [
       "http://localhost:3000",
       "https://virtual-board-git-main-tanish-thorats-projects.vercel.app",
+      "https://doodlecraft.live/",
     ],
     methods: ["GET", "POST"],
     credentials: true,
@@ -25,6 +26,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://virtual-board-git-main-tanish-thorats-projects.vercel.app",
+      "https://doodlecraft.live/",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
