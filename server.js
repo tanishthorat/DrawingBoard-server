@@ -11,9 +11,9 @@ const rooms = new Map();
 const io = new Server(server, {
   cors: {
     origin: [
+      "https://doodlecraft.live",
       "http://localhost:3000",
       "https://virtual-board-git-main-tanish-thorats-projects.vercel.app",
-      "https://doodlecraft.live/",
     ],
     methods: ["GET", "POST"],
     credentials: true,
@@ -24,9 +24,10 @@ const io = new Server(server, {
 app.use(
   cors({
     origin: [
+      "https://doodlecraft.live",
       "http://localhost:3000",
       "https://virtual-board-git-main-tanish-thorats-projects.vercel.app",
-      "https://doodlecraft.live/",
+      
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
