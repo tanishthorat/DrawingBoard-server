@@ -3,6 +3,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { v4: uuidv4 } = require("uuid");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
@@ -40,15 +41,79 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/api/room/create", (req, res) => {
-  const roomId = uuidv4();
-  rooms.set(roomId, {
-    elements: [],
-    users: new Map(),
-    createdAt: Date.now(),
-  });
-  res.json({ roomId });
+app.use(express.json())
+
+app.post("/api/bug-report", async (req, res) => {
+  // Log the request body for debugging
+  // console.log("Request body:", req.body);
+
+  // Check if req.body exists
+  if (!req.body) {
+    return res.status(400).json({ success: false, error: "Missing request body" });
+  }
+
+  const { name, type, desc } = req.body;
+
+  // Build the payload as provided
+  const payload = {
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": process.env.RECIPIENT_NUMBER || "918975478992",
+    "type": "template",
+    "template": {
+      "name": "doodlecraft_issue_template",
+      "language": { "code": "en" },
+      "components": [
+        {
+          "type": "body",
+          "parameters": [
+            {
+              "type": "text",
+              "parameter_name": "username",
+              "text": name || "Tanish Thorat 2"
+            },
+            {
+              "type": "text",
+              "parameter_name": "type",
+              "text": type || "bug report"
+            },
+            {
+              "type": "text",
+              "parameter_name": "desc",
+              "text": desc || "this issue need to be fixed ASAP"
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/v15.0/${process.env.PHONE_NUMBER_ID}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.WHATSAPP_TOKEN}`
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+      // console.error("WhatsApp API error:", data);
+      return res.status(500).json({ success: false, error: data });
+    }
+    // console.log("WhatsApp API response:", data);
+    res.json({ success: true, data });
+  } catch (error) {
+    // console.error("Error sending message:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
+
 
 app.get("/api/room/exists/:roomId", (req, res) => {
   const exists = rooms.has(req.params.roomId);
